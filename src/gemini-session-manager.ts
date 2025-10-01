@@ -31,6 +31,23 @@ export class GeminiSessionManager {
         this.sessionId = sessionId || `session-${Date.now()}`;
     }
 
+    /**
+     * Determines authentication type from environment variables.
+     * Compatible with official Gemini CLI environment variable handling.
+     */
+    private getAuthTypeFromEnv(): AuthType | undefined {
+        if (process.env['GOOGLE_GENAI_USE_GCA'] === 'true') {
+            return AuthType.LOGIN_WITH_GOOGLE;
+        }
+        if (process.env['GOOGLE_GENAI_USE_VERTEXAI'] === 'true') {
+            return AuthType.USE_VERTEX_AI;
+        }
+        if (process.env['GEMINI_API_KEY']) {
+            return AuthType.USE_GEMINI;
+        }
+        return undefined;
+    }
+
     async start(systemInstruction?: string): Promise<void> {
         if (this.isActive()) {
             console.error('[GeminiSessionManager] Already started');
@@ -49,7 +66,15 @@ export class GeminiSessionManager {
             });
 
             await this.config!.initialize();
-            await this.config!.refreshAuth(AuthType.LOGIN_WITH_GOOGLE);
+
+            const authType = this.getAuthTypeFromEnv();
+            if (!authType) {
+                console.error('[GeminiSessionManager] No auth environment variables found, using OAuth');
+                await this.config!.refreshAuth(AuthType.LOGIN_WITH_GOOGLE);
+            } else {
+                console.error(`[GeminiSessionManager] Using auth type: ${authType}`);
+                await this.config!.refreshAuth(authType);
+            }
 
             this.client = this.config.getGeminiClient();
             await this.client.startChat();
