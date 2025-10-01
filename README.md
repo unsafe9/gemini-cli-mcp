@@ -15,14 +15,12 @@ Expert code reviewer providing detailed feedback with severity levels, concrete 
 
 ## Quick Start
 
-### 1. Install & Build
+### Install & Build
 ```bash
 npm install && npm run build
 ```
 
-### 2. Configure MCP Client
-Add to your MCP settings:
-
+### Setup MCP Client
 ```json
 {
   "mcpServers": {
@@ -37,7 +35,17 @@ Add to your MCP settings:
 }
 ```
 
-The server will automatically prompt for OAuth2 authentication on first run. You need a Google account with Gemini API access.
+### Authentication
+
+**Gemini CLI Compatible**: Uses the same environment variables as the official Gemini CLI.
+
+- **OAuth**: No environment variables needed (default)
+- **Vertex AI**: Set `GOOGLE_GENAI_USE_VERTEXAI=true` with GCP credentials
+
+**Environment Variables**:
+- `GEMINI_API_KEY` - API key authentication
+- `GOOGLE_GENAI_USE_VERTEXAI=true` - Vertex AI
+- `GOOGLE_GENAI_USE_GCA=true` - Force OAuth
 
 ## Examples
 
