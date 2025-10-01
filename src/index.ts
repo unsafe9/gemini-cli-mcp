@@ -10,7 +10,7 @@ import { GeminiSessionManager } from './gemini-session-manager.js';
 async function main() {
     try {
         // Get configuration from environment variables
-        const model = process.env.AGENT_MODEL || 'gemini-2.5-flash';
+        const model = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
 
         // Create Gemini session factory
         const sessionFactory: GeminiSessionFactory = (projectPath: string, sessionId: string) => {
